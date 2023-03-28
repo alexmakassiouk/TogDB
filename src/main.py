@@ -1,5 +1,8 @@
+from departures import departures_main
+
 def option_one():
     print("You selected option 1")
+    departures_main()
 
 def option_two():
     print("You selected option 2")
@@ -9,7 +12,7 @@ def option_three():
 
 def show_menu():
     print("Menu:")
-    print("1. Option 1")
+    print("1. Trainroutes at a station")
     print("2. Option 2")
     print("3. Option 3")
 
