@@ -7,7 +7,7 @@ TDT4145 Spring 2023 Project
 > Emil Gravningen Pilley
 
 ## Run
-To run program go to src directory and write `python3 main.py
+To run program go to src directory and write `python3 main.py`
 
 ## SQLite3
 
