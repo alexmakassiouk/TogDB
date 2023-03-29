@@ -26,14 +26,49 @@ def construct_query(dep, des, date: str, time: str):
         SELECT t.ID, t.startstasjon, t.avgangstid, ts.jernbanestasjonNavn, ts.avgangstid, t.endestasjon, t.ankomsttid, tu.ukedagID
         FROM togrute AS t INNER JOIN togrute_stoppestasjon AS ts ON (t.ID = ts.togruteID)
         INNER JOIN togrute_ukedager AS tu ON (tu.togruteID = t.ID)
-        WHERE ((tu.ukedagID = {weekday}) OR tu.ukedagID = {weekday+1})
-        AND (ts.jernbanestasjonNavn = '{dep}' OR ts.jernbanestasjonNavn = '{des}')
+        WHERE ((tu.ukedagID = {weekday} AND ts.avgangstid > '{time}') OR tu.ukedagID = {(weekday%7)+1})
+        AND (ts.jernbanestasjonNavn = '{dep}' OR ts.jernbanestasjonNavn = '{des}' OR t.startstasjon = '{dep}' OR t.endestasjon = '{des}')
         ORDER BY tu.ukedagID, t.ID, ts.avgangstid
     """
     rows = []
     for row in cur.execute(sql):
         rows.append(row)
-        print(row)
+
+    matching_trainroutes = []
+
+    for row in rows:
+        # If departure is from a starting station and destination is at a stop
+        if row[1] == dep and row[3] == des:
+            if row[2] > time or row[7] == (weekday+1)%7:
+                matching_trainroutes.append((row[0], row[1], row[2], row[3], row[4], row[7]))
+        #If departure is from a stop and destination is at an end station
+        elif row[3] == dep and row[5] == des:
+            matching_trainroutes.append((row[0], row[3], row[4], row[5], row[6], row[7]))
+        # If departure is from a starting station and destination is at an end station
+        elif row[1] == dep and row[5] == des:
+            # Avoid duplicates. This list will contain matching trainroutes which has same trainroute ID and same weekdayID as current row
+            already_exists = [trainroute for trainroute in matching_trainroutes if trainroute[0] == row[0] and trainroute[5]==row[7]]
+            # If list is empty: Trainroute in current row has not yet been added to matching trainroutes
+            if len(already_exists) == 0:
+                if row[2] > time:
+                    matching_trainroutes.append((row[0], row[1], row[2], row[5], row[6], row[7]))
+                elif row[7] == (weekday+1)%7:
+                    matching_trainroutes.append((row[0], row[1], row[2], row[5], row[6], row[7]))
+                elif row[7] == weekday+1:
+                    matching_trainroutes.append((row[0], row[1], row[2], row[5], row[6], row[7]))
+
+    # This for loop adds trainroutes when both departure and destination are stops along the trainroute.
+    for i in range(1,len(rows)):
+        # If two rows are the same trainroute and the former row is departure stop and current row is destination stop -> Match
+        if rows[i-1][0] == rows[i][0] and rows[i-1][3] == dep and rows[i][3] == des and rows[i-1][7] == rows[i][7]:
+            matching_trainroutes.append((rows[i-1][0], rows[i-1][3], rows[i-1][4], rows[i][3], rows[i][4], rows[i][7]))
+    
+    for trainroute in matching_trainroutes:
+        print(trainroute)
+    print()
+    #for row in rows:
+        #print(row)
+
     
 
-construct_query("Fauske", "Bodø", "29.03.23", "07:00")
+construct_query( "Steinkjer","Fauske", "10.04.23", "09:20")
