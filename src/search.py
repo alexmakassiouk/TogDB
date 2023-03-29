@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
 
-con = sqlite3.connect("src/tog.db")
+con = sqlite3.connect("tog.db")
 cur = con.cursor()
 
 def search_main():
@@ -10,6 +10,7 @@ def search_main():
     date = input("Which date are you travelling? (dd.mm.yy) ")
     time = input("At which time do you want to travel? (hh:mm) ")
     print()
+    construct_query(departure, destination, date, time)
 
 def construct_query(dep, des, date: str, time: str):
     day, month, year = date.split(".")
@@ -21,6 +22,8 @@ def construct_query(dep, des, date: str, time: str):
         print("Invalid date!")
         return
     weekday = dt.isoweekday()
+    date = str(dt.day) + "." + str(dt.month) + "." + str(dt.year)
+    next_date = str(dt.day+1) + "." + str(dt.month) + "." + str(dt.year)
 
     sql = f"""
         SELECT t.ID, t.startstasjon, t.avgangstid, ts.jernbanestasjonNavn, ts.avgangstid, t.endestasjon, t.ankomsttid, tu.ukedagID
@@ -64,7 +67,10 @@ def construct_query(dep, des, date: str, time: str):
             matching_trainroutes.append((rows[i-1][0], rows[i-1][3], rows[i-1][4], rows[i][3], rows[i][4], rows[i][7]))
     
     for trainroute in matching_trainroutes:
-        print(trainroute)
+        if trainroute[5] == weekday:
+            print("Linje " + str(trainroute[0]) + ": " + date +" "+ str(trainroute[1]) + " kl. " + str(trainroute[2]) + " - " + str(trainroute[3]) + " kl. " + str(trainroute[4]))
+        else:
+            print("Linje " + str(trainroute[0]) + ": " + next_date +" "+ str(trainroute[1]) + " kl. " + str(trainroute[2]) + " - " + str(trainroute[3]) + " kl. " + str(trainroute[4]))
     print()
     #for row in rows:
         #print(row)
