@@ -1,5 +1,6 @@
 from departures import departures_main
 from user import user_main
+from search import search_main
 
 def option_one():
     print("You selected option 1")
@@ -11,6 +12,7 @@ def option_two():
 
 def option_three():
     print("You selected option 3")
+    search_main()
 
 def show_menu():
     choice = " "
@@ -18,7 +20,8 @@ def show_menu():
         print("Menu:")
         print("1. Trainroutes at a station")
         print("2. Register user")
-        print("3. Option 3")
+        print("3. Search travel")
+        print("9. Exit")
         choice = input("Enter your choice: ")
         if choice == "1":
             option_one()
@@ -26,7 +29,7 @@ def show_menu():
             option_two()
         elif choice == "3":
             option_three()
-        elif choice == "exit":
+        elif choice == "exit" or choice == "9":
             break
         else:
             print("Invalid choice")
