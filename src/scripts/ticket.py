@@ -1,7 +1,7 @@
 import sqlite3
 
 # Open a connection to the database file
-conn = sqlite3.connect('../tog.db')
+conn = sqlite3.connect('src/tog.db')
 
 # Create a cursor object to execute SQL queries
 cur = conn.cursor()
@@ -40,6 +40,27 @@ def get_train_departure_times(route_name, station_name):
 def get_train_route(start_station, end_station):
     cur.execute("SELECT navn FROM banestrekning WHERE startstasjon = ? AND endestasjon = ?", (start_station, end_station))
     return cur.fetchone()[0]
+
+trainroute_event_data = [
+    (1, "03.04.23"),
+    (2, "03.04.23"),
+    (3, "03.04.23"),
+    (1, "04.04.23"),
+    (2, "04.04.23"),
+    (3, "04.04.23"),
+]
+
+def insert_trainroute_event_data(trainroute_events):
+    cur.executemany("INSERT INTO togruteforekomst VALUES(?, ?)", trainroute_event_data)
+    conn.commit()
+
+def print_trainroute_event_data():
+    print("Inserted data for trainroute events:")
+    for row in cur.execute("SELECT * FROM togruteforekomst"):
+        print(row)
+
+insert_trainroute_event_data(trainroute_event_data)
+print_trainroute_event_data()
 
 # Close the database connection
 conn.close()
