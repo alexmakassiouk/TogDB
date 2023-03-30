@@ -59,7 +59,7 @@ def print_trainroute_event_data():
     for row in cur.execute("SELECT * FROM togruteforekomst"):
         print(row)
 
-insert_trainroute_event_data(trainroute_event_data)
+#insert_trainroute_event_data(trainroute_event_data)
 print_trainroute_event_data()
 
 # Close the database connection
