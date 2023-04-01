@@ -49,7 +49,7 @@ def upcoming_trips_main():
         print("You have no upcoming trips!")
     else:
         print("Here are your upcoming trips:")
-        for row in upcoming_trips_data:
+        for row in upcoming_trips_data: 
             print()
             print("Ordrenummer " + str(row[0]) + ". Kjøpt " + row[1])
             print("Linje " + str(row[2]))
