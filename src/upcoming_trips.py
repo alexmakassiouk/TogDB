@@ -25,20 +25,22 @@ def upcoming_trips_main():
     current_date = today.strftime("%d.%m.%Y")[0:-4] + today.strftime("%d.%m.%Y")[-2:]
 
 # whooops - date is stored in a non-comparable way of course... Should be yy.mm.dd 
-    upcoming_trips_sql = f"""
-        SELECT 
-            k.ordrenummer, k.kjopstidspunkt, k.togruteID, k.reisedato, b.ID, b.vognID, b.plassnummer, b.pastigning, b.avstigning 
-        FROM
-            kundeordre AS k
-        INNER JOIN
-            billett AS b
-        ON
-            (k.ordrenummer = b.ordrenummer)
-        WHERE
-            k.kundenummer = ?
-        AND
-            k.reisedato >= ?
-    """
+    upcoming_trips_sql = """
+    SELECT 
+        k.ordrenummer, k.kjopstidspunkt, k.togruteID, k.reisedato, b.ID, b.vognID, b.plassnummer, b.pastigning, b.avstigning 
+    FROM
+        kundeordre AS k
+    INNER JOIN
+        billett AS b
+    ON
+        (k.ordrenummer = b.ordrenummer)
+    WHERE
+        k.kundenummer = ?
+    AND
+        k.reisedato >= ?
+    ORDER BY
+        k.reisedato ASC
+"""
     res = cur.execute(upcoming_trips_sql, (customer_ID, current_date))
     upcoming_trips_data = res.fetchall()
 
