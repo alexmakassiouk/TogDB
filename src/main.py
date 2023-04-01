@@ -2,6 +2,7 @@ from departures import departures_main
 from user import user_main
 from search import search_main
 from find_tickets import find_tickets_main
+from upcoming_trips import upcoming_trips_main
 
 def option_one():
     print("You selected option 1")
@@ -18,6 +19,9 @@ def option_three():
 def option_four():
     print("You selected option 4")
     find_tickets_main()
+def option_five():
+    print("You selected option 5")
+    upcoming_trips_main()
 
 def show_menu():
     choice = " "
@@ -27,6 +31,7 @@ def show_menu():
         print("2. Register user")
         print("3. Search travel")
         print("4. Find available tickets")
+        print("5. See upcoming trips")
         print("9. Exit")
         choice = input("Enter your choice: ")
         if choice == "1":
@@ -37,6 +42,8 @@ def show_menu():
             option_three()
         elif choice == "4":
             option_four()
+        elif choice == "5":
+            option_five()
         elif choice == "exit" or choice == "9":
             break
         else:
