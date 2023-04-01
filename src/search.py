@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
 
-con = sqlite3.connect("src/tog.db")
+con = sqlite3.connect("tog.db")
 cur = con.cursor()
 
 def search_main():
@@ -30,11 +30,15 @@ def construct_query(dep, des, date: str, time: str):
 
     # Get rows for each stop station for each train route for the two days after the inputted time where dep or des station is included in the row. Include start and stop station on train route in each row
     sql = f"""
-        SELECT t.ID, t.startstasjon, t.avgangstid, ts.jernbanestasjonNavn, ts.avgangstid, t.endestasjon, t.ankomsttid, tu.ukedagID
-        FROM togrute AS t INNER JOIN togrute_stoppestasjon AS ts ON (t.ID = ts.togruteID)
-        INNER JOIN togrute_ukedager AS tu ON (tu.togruteID = t.ID)
-        WHERE (((tu.ukedagID = {weekday} AND t.avgangstid >= '{time}') OR tu.ukedagID = {(weekday%7)+1}) OR (tu.ukedagID = {weekday} AND ts.avgangstid >= '{time}') OR tu.ukedagID = {(weekday%7)+1})
-        AND (ts.jernbanestasjonNavn = '{dep}' OR ts.jernbanestasjonNavn = '{des}' OR t.startstasjon = '{dep}' OR t.endestasjon = '{des}')
+        SELECT 
+          t.ID, t.startstasjon, t.avgangstid, ts.jernbanestasjonNavn, ts.avgangstid, t.endestasjon, t.ankomsttid, tu.ukedagID
+        FROM 
+          togrute AS t 
+          INNER JOIN togrute_stoppestasjon AS ts ON (t.ID = ts.togruteID)
+          INNER JOIN togrute_ukedager AS tu ON (tu.togruteID = t.ID)
+        WHERE 
+          (((tu.ukedagID = {weekday} AND t.avgangstid >= '{time}') OR tu.ukedagID = {(weekday%7)+1}) OR (tu.ukedagID = {weekday} AND ts.avgangstid >= '{time}') OR tu.ukedagID = {(weekday%7)+1})
+          AND (ts.jernbanestasjonNavn = '{dep}' OR ts.jernbanestasjonNavn = '{des}' OR t.startstasjon = '{dep}' OR t.endestasjon = '{des}')
         ORDER BY tu.ukedagID, t.ID, ts.avgangstid
     """
     rows = []
@@ -98,4 +102,7 @@ def print_searched_routes(matching_trainroutes: list, weekday: int, date: str, n
 
     
 
-#construct_query( "Mo i Rana","Bodø", "30.03.23", "08:20")
+# results = construct_query( "Steinkjer","Bodø", "30.03.23", "08:20")
+# for res in results[0]:
+#     print(res)
+#print_searched_routes(res, 4, "30.03.23", "31.03.23")

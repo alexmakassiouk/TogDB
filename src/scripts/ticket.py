@@ -1,7 +1,7 @@
 import sqlite3
 
 # Open a connection to the database file
-conn = sqlite3.connect('src/tog.db')
+conn = sqlite3.connect('tog.db')
 
 # Create a cursor object to execute SQL queries
 cur = conn.cursor()
@@ -59,7 +59,7 @@ def print_trainroute_event_data():
     for row in cur.execute("SELECT * FROM togruteforekomst"):
         print(row)
 
-#insert_trainroute_event_data(trainroute_event_data)
+insert_trainroute_event_data(trainroute_event_data)
 print_trainroute_event_data()
 
 # Close the database connection

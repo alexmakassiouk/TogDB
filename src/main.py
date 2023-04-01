@@ -42,5 +42,4 @@ def show_menu():
         else:
             print("Invalid choice")
 
-if __name__ == '__main__':
-    show_menu()
+show_menu()
