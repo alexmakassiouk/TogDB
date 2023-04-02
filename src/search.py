@@ -17,6 +17,7 @@ def search_main():
 
 def construct_query(dep, des, date: str, time: str):
     combined_date_time = date + " " + time
+    # Catch invalid format on date and time
     try:
         dt = datetime.strptime(combined_date_time, '%y.%m.%d %H:%M')
     except ValueError:
@@ -43,6 +44,7 @@ def construct_query(dep, des, date: str, time: str):
         ORDER BY tu.ukedagID, t.ID, ts.avgangstid
     """
     rows = []
+    # If weekday = 7 then it will also check for weekday = 1, since this is the weekday after 7
     for row in cur.execute(sql, (weekday, time, (weekday%7)+1, weekday, time, (weekday%7)+1, dep, des, dep, des)):
         rows.append(row)
 
@@ -95,15 +97,3 @@ def print_searched_routes(matching_trainroutes: list, weekday: int, date: str, n
         else:
             print("Linje " + str(trainroute[0]) + ": " + next_date +" "+ str(trainroute[1]) + " kl. " + str(trainroute[2]) + " - " + str(trainroute[3]) + " kl. " + str(trainroute[4]))
     print()
-
-    # print("ALL ROWS:")
-    # print()
-    # for row in rows:
-    #     print(row)
-
-    
-
-# results = construct_query( "Steinkjer","Bodø", "30.03.23", "08:20")
-# for res in results[0]:
-#     print(res)
-#print_searched_routes(res, 4, "30.03.23", "31.03.23")
