@@ -17,31 +17,32 @@ def construct_query(station, weekday):
         FROM togrute_ukedager AS tu
         INNER JOIN togrute AS t ON (tu.togruteID = t.ID)
         INNER JOIN togrute_stoppestasjon AS ts ON (t.ID = ts.togruteID)
-        WHERE tu.ukedagID = {weekday}
-        AND ts.jernbanestasjonNavn = '{station}'"""
+        WHERE tu.ukedagID = ?
+        AND ts.jernbanestasjonNavn = ?
+        """
     
     rows = []
-    for row in cur.execute(sql):
+    for row in cur.execute(sql, (weekday, station)):
         rows.append((1, *row))
 
     sql_start_stations = f"""
     SELECT tu.togruteID, t.startstasjon, t.avgangstid, t.endestasjon, t.ankomsttid
     FROM togrute_ukedager AS tu
     INNER JOIN togrute AS t ON (tu.togruteID = t.ID)
-    WHERE tu.ukedagID = {weekday}
-    AND t.startstasjon = '{station}'
+    WHERE tu.ukedagID = ?
+    AND t.startstasjon = ?
     """
-    for row in cur.execute(sql_start_stations):
+    for row in cur.execute(sql_start_stations, (weekday, station)):
         rows.append((0, *row))
 
     sql_end_stations = f"""
     SELECT tu.togruteID, t.endestasjon, t.ankomsttid
     FROM togrute_ukedager AS tu
     INNER JOIN togrute AS t ON (tu.togruteID = t.ID)
-    WHERE tu.ukedagID = {weekday}
-    AND t.endestasjon = '{station}'
+    WHERE tu.ukedagID = ?
+    AND t.endestasjon = ?
     """
-    for row in cur.execute(sql_end_stations):
+    for row in cur.execute(sql_end_stations, (weekday, station)):
         rows.append((2, *row))
 
     for row in rows:

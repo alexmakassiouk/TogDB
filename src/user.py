@@ -13,10 +13,10 @@ def user_main():
 
 def post_user(name, email, phone):
     sql = f"""
-    INSERT INTO kunde(navn, epost, mobilnummer) VALUES('{name}', '{email}', '{phone}')
+    INSERT INTO kunde(navn, epost, mobilnummer) VALUES(?, ?, ?)
     """
     try:
-        cur.execute(sql)
+        cur.execute(sql, (name, email, phone))
         con.commit()
         print("Thank you,", name + ".", "Your account is now created")
     except sqlite3.IntegrityError:
