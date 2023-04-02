@@ -9,6 +9,7 @@ def departures_main():
     weekday_input = input("On which weekday would you like to see departures? (1: Monday, 7: Sunday, etc.) ")
     print()
     construct_query(station_input, weekday_input)
+    con.close()
 
 def construct_query(station, weekday):
 

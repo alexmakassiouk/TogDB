@@ -50,7 +50,7 @@ def upcoming_trips_main():
     upcoming_trips_data = res.fetchall()
 
     # Display nicely
-    
+
     print("Hello", customer_name + "!")
     if len(upcoming_trips_data) == 0:
         print("You have no upcoming trips!")
@@ -66,3 +66,5 @@ def upcoming_trips_main():
             print("Vogn ID: " + str(row[5]))
             print("Plass nummer " + str(row[6]))
     print()
+
+    con.close()

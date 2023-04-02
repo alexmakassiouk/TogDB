@@ -13,7 +13,8 @@ def search_main():
     print()
     results, weekday, new_date, next_date = construct_query(departure, destination, format_date_string(date), time)
     print_searched_routes(results, weekday, format_date_string(new_date), format_date_string(next_date))
-
+    
+    con.close()
 
 def construct_query(dep, des, date: str, time: str):
     combined_date_time = date + " " + time

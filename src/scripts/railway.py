@@ -113,3 +113,4 @@ def print_inserted_data():
 #insert_railway_data(stations=station_data, railways=nordlandsbanen_data, sections=section_data, 
 #                    railway_sections=nordlandsbanen_section_data, railway_stations=nordlandsbanen_station_data)
 # print_inserted_data()
+con.close()

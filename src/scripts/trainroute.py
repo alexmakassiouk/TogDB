@@ -190,3 +190,4 @@ def print_trainroute_data():
 ## Uncomment next lines to add initial data to DB
 #insert_trainroute_data(operators=operator_data, carriagetypes=carriagetype_data, trainroutes=trainroute_data, weekdays=weekday_data, trainroute_weekdays=trainroute_weekday_data, carriages=carriage_data, trainroute_carriage_setup=trainroute_carriage_setup_data, trainroute_stops=trainroute_stop_data)
 # print_trainroute_data()
+con.close()
