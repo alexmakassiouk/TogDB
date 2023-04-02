@@ -127,11 +127,22 @@ def print_trainroute_data():
     print()
     print("Trainroute weekdays:")
     for row in cur.execute("""
-                            SELECT t.ID, t.startstasjon, t.avgangstid, t.endestasjon, o.navn, u.navn
-                            FROM togrute AS t
-                            INNER JOIN togrute_ukedager AS tu ON (t.ID = tu.togruteID)
-                            INNER JOIN ukedag AS u ON (tu.ukedagID = u.ID)
-                            INNER JOIN operator AS o ON (t.operatorID = o.ID)
+                            SELECT 
+                              t.ID, t.startstasjon, t.avgangstid, t.endestasjon, o.navn, u.navn
+                            FROM 
+                              togrute AS t
+                            INNER JOIN 
+                              togrute_ukedager AS tu 
+                            ON 
+                              (t.ID = tu.togruteID)
+                            INNER JOIN 
+                              ukedag AS u 
+                            ON 
+                              (tu.ukedagID = u.ID)
+                            INNER JOIN 
+                              operator AS o 
+                            ON 
+                              (t.operatorID = o.ID)
                             """):
         print(row)
 
@@ -142,11 +153,20 @@ def print_trainroute_data():
     print()
     print("Carriages on trainroutes:")
     for row in cur.execute("""
-                            SELECT tvo.togruteID, tvo.nummer_fra_front, v.ID, vt.navn
-                            FROM togrute_vogn_oppsett AS tvo
-                            INNER JOIN vogn AS v ON (tvo.vognID = v.ID)
-                            INNER JOIN vogntype AS vt ON (v.vogntypeNavn = vt.navn)
-                            ORDER BY tvo.togruteID, tvo.nummer_fra_front
+                            SELECT 
+                              tvo.togruteID, tvo.nummer_fra_front, v.ID, vt.navn
+                            FROM 
+                              togrute_vogn_oppsett AS tvo
+                            INNER JOIN 
+                              vogn AS v 
+                            ON 
+                              (tvo.vognID = v.ID)
+                            INNER JOIN 
+                              vogntype AS vt 
+                            ON 
+                              (v.vogntypeNavn = vt.navn)
+                            ORDER BY 
+                              tvo.togruteID, tvo.nummer_fra_front
                             """):
         print(row)
     print()

@@ -75,19 +75,35 @@ def print_inserted_data():
     print()
     print("Delstrekninger in corresponding Banestrekning:")
     for row in cur.execute("""
-                        SELECT d.ID, d.lengde, d.dobbeltspor, d.stasjon1, d.stasjon2, b.navn AS tilhørerBanestrekning, b.elektrisk 
-                        FROM delstrekning AS d
-                        INNER JOIN banestrekning_delstrekninger AS bd ON (d.ID = bd.delstrekningID)
-                        INNER JOIN banestrekning AS b ON (b.ID = bd.banestrekningID)
+                        SELECT 
+                          d.ID, d.lengde, d.dobbeltspor, d.stasjon1, d.stasjon2, b.navn AS tilhørerBanestrekning, b.elektrisk 
+                        FROM 
+                          delstrekning AS d
+                        INNER JOIN 
+                          banestrekning_delstrekninger AS bd 
+                        ON 
+                          (d.ID = bd.delstrekningID)
+                        INNER JOIN 
+                          banestrekning AS b 
+                        ON 
+                          (b.ID = bd.banestrekningID)
                         """):
         print(row)
     print()
     print("All stations on each banestrekning:")
     for row in cur.execute("""
-                            SELECT b.navn, j.navn
-                            FROM banestrekning AS b 
-                            INNER JOIN banestrekning_stoppestasjoner AS bs ON (b.ID = bs.banestrekningID)
-                            INNER JOIN jernbanestasjon AS j ON (bs.jernbanestasjonNavn = j.navn)
+                            SELECT 
+                              b.navn, j.navn
+                            FROM 
+                              banestrekning AS b 
+                            INNER JOIN 
+                              banestrekning_stoppestasjoner AS bs 
+                            ON 
+                              (b.ID = bs.banestrekningID)
+                            INNER JOIN 
+                              jernbanestasjon AS j 
+                            ON 
+                              (bs.jernbanestasjonNavn = j.navn)
                             """):
         print(row)
 

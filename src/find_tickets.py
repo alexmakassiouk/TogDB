@@ -65,10 +65,10 @@ def find_tickets_main():
         tvo.vognID, tvo.nummer_fra_front, vt.navn
     FROM
         togrute_vogn_oppsett AS tvo 
-    INNER JOIN 
-        vogn AS v ON (tvo.vognID = v.ID) 
-    INNER JOIN 
-        vogntype AS vt ON (v.vogntypeNavn = vt.navn)
+        INNER JOIN 
+          vogn AS v ON (tvo.vognID = v.ID) 
+        INNER JOIN 
+          vogntype AS vt ON (v.vogntypeNavn = vt.navn)
     WHERE
         tvo.togruteID = ?"""
     carriage_data = cur.execute(get_carriage_data_sql, [trainrouteID]).fetchall()
@@ -138,13 +138,11 @@ def get_available_beds(trainrouteID, date, customerID):
         k.kundenummer, k.ordrenummer, b.ID, b.vognID, b.plassnummer
     FROM
         kundeordre AS k 
-    INNER JOIN 
-        billett AS b 
-    ON 
-        (k.ordrenummer = b.ordrenummer)
+        INNER JOIN 
+          billett AS b ON (k.ordrenummer = b.ordrenummer)
     WHERE
         k.togruteID = ?
-    AND
+        AND
         k.reisedato = ?
     """
     res = cur.execute(get_beds_sql, (trainrouteID, date))
@@ -171,10 +169,10 @@ def test():
         tvo.vognID, tvo.nummer_fra_front, vt.navn
     FROM
         togrute_vogn_oppsett AS tvo 
-    INNER JOIN 
-        vogn AS v ON (tvo.vognID = v.ID) 
-    INNER JOIN 
-        vogntype AS vt ON (v.vogntypeNavn = vt.navn)
+        INNER JOIN 
+          vogn AS v ON (tvo.vognID = v.ID) 
+        INNER JOIN 
+          vogntype AS vt ON (v.vogntypeNavn = vt.navn)
     WHERE
         tvo.togruteID = ?"""
     trainrouteID = 3
