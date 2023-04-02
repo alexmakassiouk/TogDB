@@ -186,5 +186,3 @@ def test():
 # test()
 # def get_available_spots(trainrouteID, date):
 
-
-# find_tickets_main()
