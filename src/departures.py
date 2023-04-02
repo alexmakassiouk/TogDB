@@ -11,7 +11,7 @@ def departures_main():
         sanitized_station = station_input.split(" ")[0].capitalize() + " " + station_input.split(" ")[1].capitalize()
     else:
         sanitized_station = station_input.capitalize()
-    print(sanitized_station)
+
     while True:
         weekday_input = input("On which weekday would you like to see departures? (1: Monday, 7: Sunday, etc.) ")
         if weekday_input == "exit":
