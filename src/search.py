@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime
+from utils.date_format import format_date_string
 
 con = sqlite3.connect("tog.db")
 cur = con.cursor()
@@ -10,14 +11,14 @@ def search_main():
     date = input("Which date are you travelling? (dd.mm.yy) ")
     time = input("At which time do you want to travel? (hh:mm) ")
     print()
-    results, weekday, new_date, next_date = construct_query(departure, destination, date, time)
-    print_searched_routes(results, weekday, new_date, next_date)
+    results, weekday, new_date, next_date = construct_query(departure, destination, format_date_string(date), time)
+    print_searched_routes(results, weekday, format_date_string(new_date), format_date_string(next_date))
 
 
 def construct_query(dep, des, date: str, time: str):
     combined_date_time = date + " " + time
     try:
-        dt = datetime.strptime(combined_date_time, '%d.%m.%y %H:%M')
+        dt = datetime.strptime(combined_date_time, '%y.%m.%d %H:%M')
     except ValueError:
         print("Invalid date!")
         return
@@ -25,8 +26,8 @@ def construct_query(dep, des, date: str, time: str):
     # Get the value which is used as ukedagID in the DB
     weekday = dt.isoweekday()
 
-    date = str(dt.day) + "." + str(dt.month) + "." + str(dt.year)
-    next_date = str(dt.day+1) + "." + str(dt.month) + "." + str(dt.year)
+    date = str(dt.year) + "." + str(dt.month) + "." + str(dt.day)
+    next_date = str(dt.year) + "." + str(dt.month) + "." + str(dt.day+1)
 
     # Get rows for each stop station for each train route for the two days after the inputted time where dep or des station is included in the row. Include start and stop station on train route in each row
     sql = f"""

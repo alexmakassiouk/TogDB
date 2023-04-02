@@ -1,6 +1,8 @@
 import sqlite3
 from datetime import datetime
 
+from utils.date_format import format_date_string
+
 con = sqlite3.connect("tog.db")
 cur = con.cursor()
 
@@ -22,9 +24,7 @@ def upcoming_trips_main():
     customer_ID = customer_res[0]
     customer_name = customer_res[1]
     today = datetime.now()
-    current_date = today.strftime("%d.%m.%Y")[0:-4] + today.strftime("%d.%m.%Y")[-2:]
-
-# whooops - date is stored in a non-comparable way of course... Should be yy.mm.dd 
+    current_date = today.strftime("%y.%m.%d")
     upcoming_trips_sql = """
     SELECT 
         k.ordrenummer, k.kjopstidspunkt, k.togruteID, k.reisedato, b.ID, b.vognID, b.plassnummer, b.pastigning, b.avstigning 
@@ -51,9 +51,9 @@ def upcoming_trips_main():
         print("Here are your upcoming trips:")
         for row in upcoming_trips_data: 
             print()
-            print("Ordrenummer " + str(row[0]) + ". Kjøpt " + row[1])
+            print("Ordrenummer " + str(row[0]) + ". Kjøpt " + format_date_string(row[1].split(" ")[0]) + " " + row[1].split(" ")[1])
             print("Linje " + str(row[2]))
-            print("Dato: " + row[3])
+            print("Dato: " + format_date_string(row[3]))
             print(row[7] + " - " + row[8])
             print("Billettnummer " + str(row[4]))
             print("Vogn ID: " + str(row[5]))

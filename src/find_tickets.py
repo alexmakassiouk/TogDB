@@ -1,6 +1,7 @@
 import sqlite3
 from search import construct_query
 from datetime import datetime
+from utils.date_format import format_date_string
 
 con = sqlite3.connect("tog.db")
 cur = con.cursor()
@@ -24,7 +25,7 @@ def find_tickets_main():
     date = input("Which date are you travelling? (dd.mm.yy) ")
     time = input("At which time do you want to travel? (hh:mm) ")
 
-    trainroutes_two_days, weekday, new_date, next_date = construct_query(departure, destination, date, time)
+    trainroutes_two_days, weekday, new_date, next_date = construct_query(departure, destination, format_date_string(date), time)
     
     trainroutes = list(filter(lambda t: t[5] == weekday, trainroutes_two_days))
     
@@ -48,14 +49,14 @@ def find_tickets_main():
 
     customerID = cur.execute("SELECT k.kundenummer FROM kunde AS k WHERE k.epost = ?", [str(email)]).fetchone()[0]
     today = datetime.now()
-    current_date = today.strftime("%d.%m.%Y")[0:-4] + today.strftime("%d.%m.%Y")[-2:]
+    current_date = today.strftime("%y.%m.%d")
     current_time = today.strftime("%H:%M")
     formatted_purchase_time = current_date +" " + current_time
     new_order_sql = f"""
     INSERT INTO kundeordre(kjopstidspunkt, kundenummer, togruteID, reisedato)
     VALUES (?, ?, ?, ?)
     """
-    cur.execute(new_order_sql, (formatted_purchase_time, customerID, trainrouteID, date))
+    cur.execute(new_order_sql, (formatted_purchase_time, customerID, trainrouteID, format_date_string(date)))
     con.commit()
     order_ID = cur.execute("SELECT ordrenummer FROM kundeordre WHERE kundenummer = ? AND kjopstidspunkt = ?", (customerID, formatted_purchase_time)).fetchone()[0]
 
@@ -100,7 +101,7 @@ def find_tickets_main():
 
     if bed_ticket:
         print("Here are the available beds:")
-        available_beds = [str(bed) for bed in get_available_beds(trainrouteID, date, customerID)]
+        available_beds = [str(bed) for bed in get_available_beds(trainrouteID, format_date_string(date), customerID)]
         for bed in available_beds:
             if int(bed) % 2 == 1:
                 if str(int(bed)+1) in available_beds:
@@ -161,6 +162,7 @@ def get_available_beds(trainrouteID, date, customerID):
                 if (row[4]+1) in carriage_bed_numbers:
                     carriage_bed_numbers.remove(row[4]+1)
     return carriage_bed_numbers
+
 
 def test():
     
