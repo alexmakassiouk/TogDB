@@ -5,10 +5,26 @@ cur = con.cursor()
 
 def departures_main():
     station_input = input("From which station would you like to see train routes? ")
+    if len(station_input.split(" ")) == 3:
+        sanitized_station = station_input.split(" ")[0].capitalize() + " " + station_input.split(" ")[1].lower() + " " + station_input.split(" ")[2].capitalize() 
+    elif len(station_input.split(" ")) == 2:
+        sanitized_station = station_input.split(" ")[0].capitalize() + " " + station_input.split(" ")[1].capitalize()
+    else:
+        sanitized_station = station_input.capitalize()
 
-    weekday_input = input("On which weekday would you like to see departures? (1: Monday, 7: Sunday, etc.) ")
+    while True:
+        weekday_input = input("On which weekday would you like to see departures? (1: Monday, 7: Sunday, etc.) ")
+        if weekday_input == "exit":
+            return
+        try:
+            weekday = int(weekday_input)
+            if weekday >= 1 and weekday <= 7:
+                break
+        except:
+            print("please enter a valid number")
+
     print()
-    construct_query(station_input, weekday_input)
+    construct_query(sanitized_station, weekday_input)
 
 def construct_query(station, weekday):
 
@@ -70,5 +86,6 @@ def construct_query(station, weekday):
             print("Togrute", row[1], ":", row[2], "kl.", row[3], "-", row[4], "kl.", row[5])
         elif row[0] == 2:
             print("Togrute", row[1], ": Ankommer", row[2], "kl.", row[3])
-
+    if len(rows) == 0:
+        print("No results!")
     print()

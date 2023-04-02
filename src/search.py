@@ -1,19 +1,67 @@
 import sqlite3
 from datetime import datetime
+from utils.date_time_validation import is_valid_date, is_valid_time
 from utils.date_format import format_date_string
 
 con = sqlite3.connect("tog.db")
 cur = con.cursor()
 
 def search_main():
-    departure = input("Where are you departing from? ")
-    destination = input("Where are you going? ")
-    date = input("Which date are you travelling? (dd.mm.yy) ")
-    time = input("At which time do you want to travel? (hh:mm) ")
-    print()
-    results, weekday, new_date, next_date = construct_query(departure, destination, format_date_string(date), time)
-    print_searched_routes(results, weekday, format_date_string(new_date), format_date_string(next_date))
+    all_stations_res = cur.execute("SELECT navn FROM jernbanestasjon").fetchall()
+    all_stations = []
+    for row in all_stations_res:
+        all_stations.append(row[0])
 
+    departure = input("Where are you departing from? ")
+    if len(departure.split(" ")) == 3:
+        sanitized_departure = departure.split(" ")[0].capitalize() + " " + departure.split(" ")[1].lower() + " " + departure.split(" ")[2].capitalize() 
+    elif len(departure.split(" ")) == 2:
+        sanitized_departure = departure.split(" ")[0].capitalize() + " " + departure.split(" ")[1].capitalize()
+    else:
+        sanitized_departure = departure.capitalize()
+    
+    while sanitized_departure not in all_stations:
+        departure = input("Not a valid station. Please try again: ")
+        if len(departure.split(" ")) == 3:
+            sanitized_departure = departure.split(" ")[0].capitalize() + " " + departure.split(" ")[1].lower() + " " + departure.split(" ")[2].capitalize() 
+        elif len(departure.split(" ")) == 2:
+            sanitized_departure = departure.split(" ")[0].capitalize() + " " + departure.split(" ")[1].capitalize()
+        else:
+            sanitized_departure = departure.capitalize()
+        if departure == "exit":
+            return
+    
+    destination = input("Where are you going? ")
+    if len(destination.split(" ")) == 3:
+        sanitized_destination = destination.split(" ")[0].capitalize() + " " + destination.split(" ")[1].lower() + " " + destination.split(" ")[2].capitalize() 
+    elif len(destination.split(" ")) == 2:
+        sanitized_destination = destination.split(" ")[0].capitalize() + " " + destination.split(" ")[1].capitalize()
+    else:
+        sanitized_destination = destination.capitalize()
+
+    while sanitized_destination not in all_stations:
+        destination = input("Not a valid station. Please try again: ")
+        if destination == "exit":
+            return
+        if len(destination.split(" ")) == 3:
+            sanitized_destination = destination.split(" ")[0].capitalize() + " " + destination.split(" ")[1].lower() + " " + destination.split(" ")[2].capitalize() 
+        elif len(destination.split(" ")) == 2:
+            sanitized_destination = destination.split(" ")[0].capitalize() + " " + destination.split(" ")[1].capitalize()
+        else:
+            sanitized_destination = destination.capitalize()
+    date = input("Which date are you travelling? (dd.mm.yy) ")
+    while not is_valid_date(date):
+        if date == "exit":
+            return
+        date = input("Not a valid date. Please try again: ")
+    time = input("At which time do you want to travel? (hh:mm) ")
+    while not is_valid_time(time):
+        if time == "exit":
+            return
+        time = input("Not a valid time. Please try again: ")
+    print()
+    results, weekday, new_date, next_date = construct_query(sanitized_departure, sanitized_destination, format_date_string(date), time)
+    print_searched_routes(results, weekday, format_date_string(new_date), format_date_string(next_date))
 
 def construct_query(dep, des, date: str, time: str):
     combined_date_time = date + " " + time
@@ -90,10 +138,13 @@ def construct_query(dep, des, date: str, time: str):
     return matching_trainroutes, weekday, date, next_date
 
 def print_searched_routes(matching_trainroutes: list, weekday: int, date: str, next_date: str):
-    print("Here are some suggested train routes:")
-    for trainroute in matching_trainroutes:
-        if trainroute[5] == weekday:
-            print("Linje " + str(trainroute[0]) + ": " + date +" "+ str(trainroute[1]) + " kl. " + str(trainroute[2]) + " - " + str(trainroute[3]) + " kl. " + str(trainroute[4]))
-        else:
-            print("Linje " + str(trainroute[0]) + ": " + next_date +" "+ str(trainroute[1]) + " kl. " + str(trainroute[2]) + " - " + str(trainroute[3]) + " kl. " + str(trainroute[4]))
+    if len(matching_trainroutes) > 0:
+        print("Here are some suggested train routes:")
+        for trainroute in matching_trainroutes:
+            if trainroute[5] == weekday:
+                print("Linje " + str(trainroute[0]) + ": " + date +" "+ str(trainroute[1]) + " kl. " + str(trainroute[2]) + " - " + str(trainroute[3]) + " kl. " + str(trainroute[4]))
+            else:
+                print("Linje " + str(trainroute[0]) + ": " + next_date +" "+ str(trainroute[1]) + " kl. " + str(trainroute[2]) + " - " + str(trainroute[3]) + " kl. " + str(trainroute[4]))
+    else:
+        print("No matches for given parameters!")
     print()
