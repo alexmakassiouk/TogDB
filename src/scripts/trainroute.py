@@ -187,6 +187,6 @@ def print_trainroute_data():
         trainRouteID = row[0]
     print(cur2.execute(f'SELECT t.ID, t.endestasjon, t.ankomsttid FROM togrute AS t WHERE t.ID = {trainRouteID}').fetchone())
 
-## Uncomment next line to add initial data to DB
+## Uncomment next lines to add initial data to DB
 #insert_trainroute_data(operators=operator_data, carriagetypes=carriagetype_data, trainroutes=trainroute_data, weekdays=weekday_data, trainroute_weekdays=trainroute_weekday_data, carriages=carriage_data, trainroute_carriage_setup=trainroute_carriage_setup_data, trainroute_stops=trainroute_stop_data)
-print_trainroute_data()
+# print_trainroute_data()
