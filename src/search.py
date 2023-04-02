@@ -38,12 +38,12 @@ def construct_query(dep, des, date: str, time: str):
           INNER JOIN togrute_stoppestasjon AS ts ON (t.ID = ts.togruteID)
           INNER JOIN togrute_ukedager AS tu ON (tu.togruteID = t.ID)
         WHERE 
-          (((tu.ukedagID = {weekday} AND t.avgangstid >= '{time}') OR tu.ukedagID = {(weekday%7)+1}) OR (tu.ukedagID = {weekday} AND ts.avgangstid >= '{time}') OR tu.ukedagID = {(weekday%7)+1})
-          AND (ts.jernbanestasjonNavn = '{dep}' OR ts.jernbanestasjonNavn = '{des}' OR t.startstasjon = '{dep}' OR t.endestasjon = '{des}')
+          (((tu.ukedagID = ? AND t.avgangstid >= ?) OR tu.ukedagID = ?) OR (tu.ukedagID = ? AND ts.avgangstid >= ?) OR tu.ukedagID = ?)
+          AND (ts.jernbanestasjonNavn = ? OR ts.jernbanestasjonNavn = ? OR t.startstasjon = ? OR t.endestasjon = ?)
         ORDER BY tu.ukedagID, t.ID, ts.avgangstid
     """
     rows = []
-    for row in cur.execute(sql):
+    for row in cur.execute(sql, (weekday, time, (weekday%7)+1, weekday, time, (weekday%7)+1, dep, des, dep, des)):
         rows.append(row)
 
     matching_trainroutes = []
