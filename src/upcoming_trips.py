@@ -66,5 +66,3 @@ def upcoming_trips_main():
             print("Vogn ID: " + str(row[5]))
             print("Plass nummer " + str(row[6]))
     print()
-
-    con.close()

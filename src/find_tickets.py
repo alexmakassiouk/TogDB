@@ -188,7 +188,6 @@ def find_tickets_main():
         con.commit()
         print("Success! You have bought seat number " + str(requested_seat) + " in carriage number " + str(carriage_ID) + " for " + departure + " - " + destination + " for Linje " + str(trainroutes.index(route)+1) + " on " + date)
     
-    con.close()
 # Return list of all available beds for given trainroute on a given date and a customer. A customer cannot buy a bed ticket in the same cabin as another customer
 def get_available_beds(trainrouteID, date, customerID):
 

@@ -9,13 +9,16 @@ def user_main():
     name = input("What is your name? ")
     email = input("What is your e-mail? ")
     while not is_valid_email(email):
+        if email == "exit":
+            return
         email = input("Invalid email. Please try again: ")
     phone = input("And lastly, what is your phone number? ")
     while not is_valid_phone(phone):
+        if phone == "exit":
+            return
         phone = input("Invalid phone. Please try again: ") 
     post_user(name, email, phone)
 
-    con.close()
 
 def is_valid_email(email):
     regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
