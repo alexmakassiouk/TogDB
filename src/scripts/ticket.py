@@ -1,7 +1,7 @@
 import sqlite3
 
 # Open a connection to the database file
-conn = sqlite3.connect('src/tog.db')
+conn = sqlite3.connect('tog.db')
 
 # Create a cursor object to execute SQL queries
 cur = conn.cursor()
@@ -42,12 +42,12 @@ def get_train_route(start_station, end_station):
     return cur.fetchone()[0]
 
 trainroute_event_data = [
-    (1, "03.04.23"),
-    (2, "03.04.23"),
-    (3, "03.04.23"),
-    (1, "04.04.23"),
-    (2, "04.04.23"),
-    (3, "04.04.23"),
+    (1, "23.04.03"),
+    (2, "23.04.03"),
+    (3, "23.04.03"),
+    (1, "23.04.04"),
+    (2, "23.04.04"),
+    (3, "23.04.04"),
 ]
 
 def insert_trainroute_event_data(trainroute_events):
