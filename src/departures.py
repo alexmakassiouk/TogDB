@@ -86,5 +86,6 @@ def construct_query(station, weekday):
             print("Togrute", row[1], ":", row[2], "kl.", row[3], "-", row[4], "kl.", row[5])
         elif row[0] == 2:
             print("Togrute", row[1], ": Ankommer", row[2], "kl.", row[3])
-
+    if len(rows) == 0:
+        print("No results!")
     print()
