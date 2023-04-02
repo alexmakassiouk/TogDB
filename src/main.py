@@ -6,23 +6,29 @@ from upcoming_trips import upcoming_trips_main
 
 def option_one():
     print("You selected option 1")
+    # User story c)
     departures_main()
 
 def option_two():
     print("You selected option 2")
+    # User story e)
     user_main()
 
 def option_three():
     print("You selected option 3")
+    # User story d)
     search_main()
 
 def option_four():
     print("You selected option 4")
+    # User story g)
     find_tickets_main()
 def option_five():
     print("You selected option 5")
+    # User story h)
     upcoming_trips_main()
 
+# Simple main menu from where all other user stories can be explored
 def show_menu():
     choice = " "
     while choice != "exit":
