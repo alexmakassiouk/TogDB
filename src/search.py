@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
+from utils.date_time_validation import is_valid_date, is_valid_time
 from utils.date_format import format_date_string
-import re
 
 con = sqlite3.connect("tog.db")
 cur = con.cursor()
@@ -63,13 +63,6 @@ def search_main():
     results, weekday, new_date, next_date = construct_query(sanitized_departure, sanitized_destination, format_date_string(date), time)
     print_searched_routes(results, weekday, format_date_string(new_date), format_date_string(next_date))
 
-def is_valid_time(time):
-    pattern = re.compile(r"^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$")
-    return pattern.match(time)
-
-def is_valid_date(date):
-    pattern = re.compile(r"(0?[1-9]|[12][0-9]|3[01])\.[0-9]+\.[0-9]+", re.IGNORECASE)
-    return pattern.match(date)
 def construct_query(dep, des, date: str, time: str):
     combined_date_time = date + " " + time
     # Catch invalid format on date and time

@@ -1,6 +1,7 @@
 import sqlite3
 from search import construct_query
 from datetime import datetime
+from utils.date_time_validation import is_valid_date, is_valid_time
 from utils.date_format import format_date_string
 
 con = sqlite3.connect("tog.db")
@@ -22,13 +23,61 @@ def find_tickets_main():
             return
     
 
+    all_stations_res = cur.execute("SELECT navn FROM jernbanestasjon").fetchall()
+    all_stations = []
+    for row in all_stations_res:
+        all_stations.append(row[0])
+
     departure = input("Where are you departing from? ")
+    if len(departure.split(" ")) == 3:
+        sanitized_departure = departure.split(" ")[0].capitalize() + " " + departure.split(" ")[1].lower() + " " + departure.split(" ")[2].capitalize() 
+    elif len(departure.split(" ")) == 2:
+        sanitized_departure = departure.split(" ")[0].capitalize() + " " + departure.split(" ")[1].capitalize()
+    else:
+        sanitized_departure = departure.capitalize()
+    
+    while sanitized_departure not in all_stations:
+        departure = input("Not a valid station. Please try again: ")
+        if len(departure.split(" ")) == 3:
+            sanitized_departure = departure.split(" ")[0].capitalize() + " " + departure.split(" ")[1].lower() + " " + departure.split(" ")[2].capitalize() 
+        elif len(departure.split(" ")) == 2:
+            sanitized_departure = departure.split(" ")[0].capitalize() + " " + departure.split(" ")[1].capitalize()
+        else:
+            sanitized_departure = departure.capitalize()
+        if departure == "exit":
+            return
+    
     destination = input("Where are you going? ")
+    if len(destination.split(" ")) == 3:
+        sanitized_destination = destination.split(" ")[0].capitalize() + " " + destination.split(" ")[1].lower() + " " + destination.split(" ")[2].capitalize() 
+    elif len(destination.split(" ")) == 2:
+        sanitized_destination = destination.split(" ")[0].capitalize() + " " + destination.split(" ")[1].capitalize()
+    else:
+        sanitized_destination = destination.capitalize()
+
+    while sanitized_destination not in all_stations:
+        destination = input("Not a valid station. Please try again: ")
+        if destination == "exit":
+            return
+        if len(destination.split(" ")) == 3:
+            sanitized_destination = destination.split(" ")[0].capitalize() + " " + destination.split(" ")[1].lower() + " " + destination.split(" ")[2].capitalize() 
+        elif len(destination.split(" ")) == 2:
+            sanitized_destination = destination.split(" ")[0].capitalize() + " " + destination.split(" ")[1].capitalize()
+        else:
+            sanitized_destination = destination.capitalize()
     date = input("Which date are you travelling? (dd.mm.yy) ")
+    while not is_valid_date(date):
+        if date == "exit":
+            return
+        date = input("Not a valid date. Please try again: ")
     time = input("At which time do you want to travel? (hh:mm) ")
+    while not is_valid_time(time):
+        if time == "exit":
+            return
+        time = input("Not a valid time. Please try again: ")
 
     # Search for train routes on the requested date and the next one. Reuse search code
-    trainroutes_two_days, weekday, new_date, next_date = construct_query(departure, destination, format_date_string(date), time)
+    trainroutes_two_days, weekday, new_date, next_date = construct_query(sanitized_departure, sanitized_destination, format_date_string(date), time)
     
     # Show only trainroutes on requested date
     trainroutes = list(filter(lambda t: t[5] == weekday, trainroutes_two_days))
@@ -46,7 +95,10 @@ def find_tickets_main():
         else:
             return
     else:
-        index_ans = input("Which one would you like to purchase tickets on? ")
+        index_ans = input("Which one would you like to purchase tickets on? (1/2) ")
+        if int(index_ans) < 1 or int(index_ans) > 2:
+            print("Invalid!")
+            return
     
     # When user answers 1 or 2 this correlates to index 0 or 1 in the trainroutes list
     trainrouteID = int(trainroutes[int(index_ans)-1][0])
@@ -92,6 +144,10 @@ def find_tickets_main():
         bed_ans = input("Would you like a bed or seat for this travel? (b/s)")
         if bed_ans.lower() == 'b':
             bed_ticket = True
+        elif bed_ans.lower() == 's':
+            bed_ticket = False
+        else:
+            return
     
     # Since only one carriage with beds, assign the carriage_ID in DB. Another approach if project should be scalable
     if bed_ticket:
@@ -141,9 +197,9 @@ def find_tickets_main():
                     VALUES
                         (?, ?, ?, ?, ?)
                 """
-                cur.execute(purchase_bed_sql, (int(requested_bed), departure, destination, order_ID, carriage_ID))
+                cur.execute(purchase_bed_sql, (int(requested_bed), sanitized_departure, sanitized_destination, order_ID, carriage_ID))
                 con.commit()
-                print("Success!", "You have bought bed number " + requested_bed + " in carriage number 2 for " + departure + " - " + destination + " for Linje " + str(trainroutes.index(route)+1) + " on " + date)
+                print("Success!", "You have bought bed number " + requested_bed + " in carriage number 2 for " + sanitized_departure + " - " + sanitized_destination + " for Linje " + str(trainroutes.index(route)+1) + " on " + date)
             else:
                 print("Not available, please try again or type 'exit'")
     
@@ -152,7 +208,7 @@ def find_tickets_main():
         print("Here are the available seats for your trip:")
         available_seats_print = ""
         # All available seats for given train on given date for given carriage and given departure- and destination station
-        available_seats = get_available_seats(trainrouteID, format_date_string(date), carriage_ID, departure, destination)
+        available_seats = get_available_seats(trainrouteID, format_date_string(date), carriage_ID, sanitized_departure, sanitized_destination)
         # Nice seat display for user with rows and seats
         for i in range(12):
             if i%4 == 0:
@@ -184,9 +240,9 @@ def find_tickets_main():
             VALUES
                 (?, ?, ?, ?, ?)
         """
-        cur.execute(purchase_seat_sql, (requested_seat, departure, destination, order_ID, carriage_ID))
+        cur.execute(purchase_seat_sql, (requested_seat, sanitized_departure, sanitized_destination, order_ID, carriage_ID))
         con.commit()
-        print("Success! You have bought seat number " + str(requested_seat) + " in carriage number " + str(carriage_ID) + " for " + departure + " - " + destination + " for Linje " + str(trainroutes.index(route)+1) + " on " + date)
+        print("Success! You have bought seat number " + str(requested_seat) + " in carriage number " + str(carriage_ID) + " for " + sanitized_departure + " - " + sanitized_destination + " for Linje " + str(trainroutes.index(route)+1) + " on " + date)
     
 # Return list of all available beds for given trainroute on a given date and a customer. A customer cannot buy a bed ticket in the same cabin as another customer
 def get_available_beds(trainrouteID, date, customerID):
